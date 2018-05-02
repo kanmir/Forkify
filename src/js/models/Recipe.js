@@ -16,7 +16,7 @@ export default class Recipe {
             this.img = recipe.image_url;
             this.url = recipe.source_url;
             this.ingredients = recipe.ingredients;
-
+            console.log(res);
         } catch (error) {
             console.log(error);
         }
@@ -37,6 +37,7 @@ export default class Recipe {
     parseIngredients() {
         const unitsLong = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds'];
         const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
+        const units = [...unitsShort, 'kg', 'g'];
 
         const newIngredients = this.ingredients.map(el => {
             // Uniform units
@@ -46,11 +47,14 @@ export default class Recipe {
             });
 
             // Remove parentheses
+            if (ingredient.indexOf('(') === 0 && ingredient.indexOf('(', 1) === -1 && ingredient.indexOf(')') === ingredient.length - 1) {
+                ingredient = ingredient.slice(1, ingredient.length - 1);
+            }
             ingredient = ingredient.replace(/ *\([^)]*\) */g, ' ');
 
             // Parse ingredients into count, unit and ingredient
             const arrIng = ingredient.split(' ');
-            const unitIndex = arrIng.findIndex(el2 => unitsShort.includes(el2));
+            const unitIndex = arrIng.findIndex(el2 => units.includes(el2));
 
 
             let objIng;
@@ -64,7 +68,22 @@ export default class Recipe {
                 if (arrCount.length === 1) {
                     count = eval(arrIng[0].replace('-', '+'));
                 } else {
-                    count = eval(arrIng.slice(0, unitIndex).join('+'));
+                    //todo
+                    let countArr = arrIng.slice(0, unitIndex);
+
+                    if (countArr.length === 2 && !isNaN(parseFloat(countArr[0]))) {
+                        count = eval(arrIng.slice(0, unitIndex).join('+'));
+
+
+                    } else {
+                        for (let i = 0; i < countArr.length; i++) {
+                            if (!isNaN(parseFloat(countArr[i]))) {
+                                count = countArr[i];
+                                break;
+                            }
+                        }
+
+                    }
                 }
 
                 objIng = {
@@ -93,5 +112,17 @@ export default class Recipe {
             
         });
         this.ingredients = newIngredients;
+    }
+
+    updateServings (type) {
+        //Servings
+        const newServings = type === 'dec' ? this.servings - 1 : this.servings + 1;
+
+        //Ingredients
+        this.ingredients.forEach(ing => {
+           ing.count *= (newServings / this.servings);
+        });
+
+        this.servings = newServings;
     }
 }

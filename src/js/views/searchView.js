@@ -11,6 +11,13 @@ export const clearResults = () => {
     elements.searchResPages.innerHTML = '';
 };
 
+export const highlightSelected = id => {
+    const resultsArr = Array.from(document.querySelectorAll('.results__link'));
+    resultsArr.forEach(el => el.classList.remove('results__link--active'));
+
+    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+};
+
 const limitRecipeTitle = (title, limit = 17) => {
     const newTitle = [];
     if (title.length > limit) {
@@ -20,6 +27,10 @@ const limitRecipeTitle = (title, limit = 17) => {
             }
             return acc + cur.length;
         }, 0);
+        let wordsTitle = title.split(' ');
+        if (wordsTitle[0].length >= limit) {
+            return `${wordsTitle[0].slice(0, limit - 3)}...`;
+        }
         return `${newTitle.join(' ')} ...`;
     }
     return title;
