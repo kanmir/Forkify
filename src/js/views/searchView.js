@@ -15,10 +15,10 @@ export const highlightSelected = id => {
     const resultsArr = Array.from(document.querySelectorAll('.results__link'));
     resultsArr.forEach(el => el.classList.remove('results__link--active'));
 
-    document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+    document.querySelector(`.results__link[href="#${id}"]`).classList.add('results__link--active');
 };
 
-const limitRecipeTitle = (title, limit = 17) => {
+export const limitRecipeTitle = (title, limit = 17) => {
     const newTitle = [];
     if (title.length > limit) {
         title.split(' ').reduce((acc, cur) => {
@@ -80,8 +80,11 @@ const renderButtons = (page, numResults, resPerPage) => {
             ${createButton(page, 'next')}
         `;
     }
-
-    elements.searchResPages.insertAdjacentHTML('afterbegin', button);
+    if (button) {
+        elements.searchResPages.insertAdjacentHTML('afterbegin', button);
+    } else {
+        elements.searchResPages.insertAdjacentHTML('afterbegin', '<h4 class="results__name">No results found ...</h4>');
+    }
 
 };
 

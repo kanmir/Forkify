@@ -24,6 +24,12 @@ const formatCount = count => {
             return str;
         } else {
             const fr = new Fraction(count - int);
+            let str = `${fr.numerator}/${fr.denominator}`; //Solving 0.333(3) problem 3333333/10000000
+
+            if (str.length > 7) {
+                str = +eval(str).toFixed(2);
+                return `${int+str}`;
+            }
             return `${int} ${fr.numerator}/${fr.denominator}`;
         }
 
@@ -44,7 +50,7 @@ const createIngredient = ingredient => `
     </li>
 `;
 
-export const renderRecipe = recipe => {
+export const renderRecipe = (recipe, isLiked) => {
     const markup = `
             <figure class="recipe__fig">
                 <img src="${recipe.img}" alt="${recipe.title}" class="recipe__img">
@@ -84,7 +90,7 @@ export const renderRecipe = recipe => {
                 </div>
                 <button class="recipe__love">
                     <svg class="header__likes">
-                        <use href="img/icons.svg#icon-heart-outlined"></use>
+                        <use href="img/icons.svg#icon-heart${isLiked ? '' : '-outlined'}"></use>
                     </svg>
                 </button>
             </div>
