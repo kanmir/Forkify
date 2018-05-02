@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { key, proxy } from '../config';
+import {key, proxy} from '../config';
 
 export default class Recipe {
     constructor(id) {
@@ -16,7 +16,6 @@ export default class Recipe {
             this.img = recipe.image_url;
             this.url = recipe.source_url;
             this.ingredients = recipe.ingredients;
-            console.log(res);
         } catch (error) {
             console.log(error);
         }
@@ -30,7 +29,7 @@ export default class Recipe {
         this.time = periods * 15;
     }
 
-    calcServings () {
+    calcServings() {
         this.servings = 4;
     }
 
@@ -109,18 +108,18 @@ export default class Recipe {
             }
 
             return objIng;
-            
+
         });
         this.ingredients = newIngredients;
     }
 
-    updateServings (type) {
+    updateServings(type) {
         //Servings
         const newServings = type === 'dec' ? this.servings - 1 : this.servings + 1;
 
         //Ingredients
         this.ingredients.forEach(ing => {
-           ing.count *= (newServings / this.servings);
+            ing.count *= (newServings / this.servings);
         });
 
         this.servings = newServings;
